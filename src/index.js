@@ -4,7 +4,7 @@ import debounce from 'lodash.debounce';
 import imageService from './js/apiService';
 import updateImagesMarkup from './js/updateImagesMarkup';
 import lightbox from './js/lightbox';
-import { notice, error } from '@pnotify/core/dist/PNotify.js';
+import { notice, error, info } from '@pnotify/core/dist/PNotify.js';
 import '@pnotify/core/dist/PNotify.css';
 import '@pnotify/core/dist/Material.css';
 import '@pnotify/core/dist/BrightTheme.css';
@@ -19,6 +19,11 @@ refs.searchInput.addEventListener(
 
     if (refs.searchInput.value === '') {
       refs.loadButton.classList.add('is-hidden');
+      info({
+        text: 'Please enter a valid searchkey!',
+        delay: 2000,
+        hide: true,
+      });
       return;
     }
     fetchImages();
