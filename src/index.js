@@ -79,10 +79,6 @@ function fetchImages() {
 
       loadBtn.show();
 
-      console.log(
-        document.documentElement.childNodes[2].childNodes[3].childNodes[0],
-      );
-
       window.scrollTo({
         top: lastHeight,
         behavior: 'smooth',
