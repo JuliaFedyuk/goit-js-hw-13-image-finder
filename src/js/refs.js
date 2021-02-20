@@ -4,7 +4,6 @@ const refs = {
   loadButton: document.querySelector('[data-action="load-more"]'),
   spinner: document.querySelector('.spinner'),
   picture: document.querySelector('.photo'),
-  body: document.querySelector('body'),
   btnLabel: document.querySelector('.label'),
   spinner: document.querySelector('.spinner'),
 };

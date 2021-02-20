@@ -4,21 +4,43 @@ import debounce from 'lodash.debounce';
 import imageService from './js/apiService';
 import updateImagesMarkup from './js/updateImagesMarkup';
 import lightbox from './js/lightbox';
-import { notice, error, info } from '@pnotify/core/dist/PNotify.js';
+import { error, info } from '@pnotify/core/dist/PNotify.js';
 import '@pnotify/core/dist/PNotify.css';
 import '@pnotify/core/dist/Material.css';
 import '@pnotify/core/dist/BrightTheme.css';
 
+const loadBtn = {
+  show() {
+    refs.loadButton.classList.remove('is-hidden');
+  },
+  hide() {
+    refs.loadButton.classList.add('is-hidden');
+  },
+};
+
+const spinner = {
+  show() {
+    refs.spinner.classList.add('spinner-border');
+  },
+  hide() {
+    refs.spinner.classList.remove('spinner-border');
+  },
+};
+
+document.forms['search-form'].addEventListener('submit', event =>
+  event.preventDefault(),
+);
+
 refs.searchInput.addEventListener(
   'input',
   debounce(() => {
-    imageService.query = refs.searchInput.value;
-    clearImagesContainer();
+    imageService.query = refs.searchInput.value.trim();
 
+    clearImagesContainer();
     imageService.resetPage();
 
-    if (refs.searchInput.value === '') {
-      refs.loadButton.classList.add('is-hidden');
+    if (refs.searchInput.value.trim() === '') {
+      loadBtn.hide();
       info({
         text: 'Please enter a valid searchkey!',
         delay: 2000,
@@ -26,6 +48,7 @@ refs.searchInput.addEventListener(
       });
       return;
     }
+
     fetchImages();
   }, 500),
 );
@@ -33,13 +56,14 @@ refs.searchInput.addEventListener(
 refs.loadButton.addEventListener('click', fetchImages);
 
 function fetchImages() {
-  refs.loadButton.classList.add('is-hidden');
-  refs.spinner.classList.add('spinner-border');
+  loadBtn.hide();
+  spinner.show();
+
   imageService
     .fetchImages()
     .then(images => {
       if (!images.length) {
-        refs.loadButton.classList.add('is-hidden');
+        loadBtn.hide();
         error({
           text: 'Sorry! Can`t find any matches! Please try again!',
           delay: 2000,
@@ -47,16 +71,26 @@ function fetchImages() {
         });
         return;
       }
+
+      const lastHeight =
+        refs.galleryList.offsetTop + refs.galleryList.offsetHeight;
+
       updateImagesMarkup(images);
 
-      refs.loadButton.classList.remove('is-hidden');
+      loadBtn.show();
+
+      console.log(
+        document.documentElement.childNodes[2].childNodes[3].childNodes[0],
+      );
+
       window.scrollTo({
-        top: document.documentElement.offsetHeight,
+        top: lastHeight,
         behavior: 'smooth',
       });
     })
+
     .finally(() => {
-      refs.spinner.classList.remove('spinner-border');
+      spinner.hide();
     });
 }
 
